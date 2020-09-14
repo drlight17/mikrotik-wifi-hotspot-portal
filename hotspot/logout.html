@@ -1,0 +1,44 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />   
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="-1">
+<title>Точка доступа в сеть Интернет - Выход</title>
+<link rel="stylesheet" href="css/style.css">
+<script>
+    function openLogin() {
+	if (window.name != 'hotspot_logout') return true;
+	open('$(link-login)', '_blank', '');
+	window.close();
+	return false;
+    }
+</script>
+</head>
+
+<body>
+    <div class="ie-fixMinHeight">
+        <div class="main">
+            <div class="wrap">
+                <h1>Вы вышли!</h1> 
+                <table>  
+                    <tr><td>Логин</td><td>$(username)</td></tr>
+                    <tr><td>IP адрес</td><td>$(ip)</td></tr>
+                    <tr><td>MAC адрес</td><td>$(mac)</td></tr>
+                    <tr><td>Время сессии</td><td>$(uptime)</td></tr>
+                    $(if session-time-left)
+                    <tr><td>Осталось времени</td><td>$(session-time-left)</td></tr>
+                    $(endif)
+                    <tr><td>Передано/получено байт:</td><td>$(bytes-in-nice) / $(bytes-out-nice)</td></tr>
+                </table>
+
+
+                <form action="$(link-login)" name="login" onSubmit="return openLogin()">
+                <input type="submit" value="Войти">
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
