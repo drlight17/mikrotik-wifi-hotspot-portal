@@ -125,10 +125,12 @@
             });
 
             jQuery('#has_code').on('click', function () {
+				var login=$('#login').val();
+				jQuery('#login2').val(login);
                 jQuery('form.code, form.login').fadeOut(500, function () {
                     setTimeout(function () {
                         jQuery('form.already').fadeIn()
-                    }, 500)
+                    }, 500);
                 });
             });
 			
