@@ -42,10 +42,10 @@ $(endif)
 
                 <form action="$(link-logout)" name="logout" onSubmit="return openLogout()">
                     <table>
-                        <tr><td>IP адрес</td><td>$(ip)</td></tr>
-                        <tr><td>Передано/получено байт / down</td><td>$(bytes-in-nice) / $(bytes-out-nice)</td></tr>
+                        <tr><td>Ваш IP адрес</td><td>$(ip)</td></tr>
+                        <tr><td>Передано/получено байт</td><td>$(bytes-in-nice) / $(bytes-out-nice)</td></tr>
                     $(if session-time-left)
-                        <tr><td>Подключено / осталось</td><td>$(uptime) / $(session-time-left)</td></tr>
+                        <tr><td>Подключено / таймаут сессии </td><td>$(uptime) / $(session-time-left)</td></tr>
                     $(else)
                         <tr><td>Подключено</td><td>$(uptime)</td></tr>
                     $(endif)
@@ -54,7 +54,7 @@ $(endif)
                     <a href="$(link-advert)" target="hotspot_advert">Advertisement required</a></td>
                         </tr>
                     $(elif refresh-timeout)
-                        <tr><td>Обновление статуса</td><td>$(refresh-timeout)</td></tr>
+                        <tr><td>Обновление статуса каждые</td><td>$(refresh-timeout)</td></tr>
                     $(endif)
                         </table>
                     $(if login-by-mac != 'yes')

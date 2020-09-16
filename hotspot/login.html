@@ -131,6 +131,8 @@
                     setTimeout(function () {
                         jQuery('form.already').fadeIn()
                     }, 500);
+					//$('#login').val
+					//$('#input').val("GeeksForGeeks"); 
                 });
             });
 			
@@ -161,6 +163,12 @@
     <!--<small class="form_description">Please log on to use the internet hotspot service</small>-->
     <form class="form login" id="login_form" style="display: none" method="get" name="sendin"
           action="$(link-login-only)" method="post">
+		                <p class="info $(if error)alert$(endif)">
+                        $(if error == "")<label>Пожалуйста, зарегистрируйтесь, чтобы<br>воспользоваться доступом в Интернет</label>$(if trial == 'yes')<br />Free trial available, <a href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)">click here</a>.$(endif)
+                        $(endif)
+
+                        $(if error)<label style="color:red;">$(error)</label>$(endif)
+                    </p>
         <label for="login">Введите Ваш номер телефона</label>
         <br>
         <div class="input_group tel">
@@ -183,7 +191,7 @@
         <div class="input_group">
             <input type="hidden" name="username" id="username2">
             <input type="hidden" name="password" id="password">
-            <input type="text" id="code" maxlength="8" placeholder="******">
+            <input type="text" id="code" maxlength="8" placeholder="пароль">
 			<input type="hidden" name="popup" value="true" />
         </div>
         <br>
@@ -208,10 +216,10 @@
         <div class="input_group">
             <input type="hidden" name="username" id="username3">
             <input type="hidden" name="password" id="password2">
-            <input type="text" id="code2" maxlength="8" placeholder="******">
+            <input type="text" id="code2" maxlength="8" placeholder="пароль">
 			<input type="hidden" name="popup" value="true" />
         </div>
-        <br>
+		<br>
         <input type="submit" class="btn disabled" value="Далее">
 				<br>
 				<a id="forgot_code" href="#">Я забыл пароль доступа</a>
