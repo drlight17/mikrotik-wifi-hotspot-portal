@@ -1,10 +1,10 @@
 # Edit in /ip hotspot user profile edit default on-logout
 
-:local smtpserv [:resolve "smtp.gmail.com"];
+:local smtpserv [:resolve "kjdgf.com"];
 
-:local Eaccount "drlight17@gmail.com";
+:local Eaccount "asjkhgdsf@jkfg.com";
 
-:local pass "***REMOVED***";
+:local pass "adfgljja";
 
 :local nas [/system identity get name];
 
@@ -36,4 +36,4 @@
 
 /ip firewall address-list add list=$today address="log-out.$time1.$userphone";
 
-/tool e-mail send from=router@drlight.mooo.com to="drlight_here@inbox.ru" server=$smtpserv port=587 user=$Eaccount password=$pass start-tls=yes subject="Logout number: $user on $nas" body="Logout number: $user time: $time1";
+/tool e-mail send from=jahsfd@khsdf.com to="dsfjkgfh@jghsdf.com" server=$smtpserv port=587 user=$Eaccount password=$pass start-tls=yes subject="Logout number: $user on $nas" body="Logout number: $user time: $time1";
