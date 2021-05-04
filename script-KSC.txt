@@ -1,1 +1,121 @@
-#Search number in log hotspot  :local smtpserv [:resolve "mail.ksc.ru"];  :local Eaccount "router@ksc.ru";  :local passwd "***REMOVED***"; :foreach line in=[/log find buffer=hotspot message~"login failed: no more sessions are allowed"] do={	:do {:local content [/log get $line message];	:put $content;    :local pos1 [:find $content " (" 0];  :put $pos1;  :if ($pos1 != " ") do={    :local uname "";    :local uname7 "";   :local uname8 "";   :local uname9 "";   :local phone "";    :local mess "";   :local mess1 "ƒÓÒÚË„ÌÛÚ+ÎËÏËÚ+ÔÓ‰ÍÎ˛˜ÂÌËÈ+Ì‡+ÎÓ„ËÌ+";   :local mess2 ".+≈ÒÎË+ÒÂÒÒËË+Á‡ÌˇÚ˚+ÌÂ+‚‡¯ËÏË+ÛÒÚÓÈÒÚ‚‡ÏË,+ÚÓ+Á‡ÔÓÒËÚÂ+ÍÓ‰+Á‡ÌÓ‚Ó+Ë+‡‚ÚÓËÁÛÈÚÂÒ¸+ÔÓ‚ÚÓÌÓ.+≈ÒÎË+‰‡ÌÌÓÂ+ÒÓÓ·˘ÂÌËÂ+ÔËıÓ‰ËÚ+Ë+ÔÓÒÎÂ+˝ÚÓ„Ó,+ÔÓ‰ÓÊ‰ËÚÂ+30+ÏËÌÛÚ+ÔÂÂ‰+ÔÓ‚ÚÓÌÓÈ+ÔÓÔ˚ÚÍÓÈ+ÔÓ‰ÍÎ˛˜ÂÌËˇ.+—+Û‚‡ÊÂÌËÂÏ,+‘»÷+ Õ÷+–¿Õ";    :set uname [:pick $content ($pos1-12) ($pos1-0)];    :put $uname;	:set mess ($mess1 . $uname . $mess2);	:put $mess;	##SMS	do {/tool fetch mode=http url="http://sms.ksc.loc/api.php"  http-method=post  http-data="phone=$uname&message=$mess" keep-result=no} on-error={};	#Email    do {/tool e-mail send from=router@ksc.ru to=root@ksc.ru server=$smtpserv port=25 user=$Eaccount password=$passwd subject="” ÔÓÎ¸ÁÓ‚‡ÚÂÎˇ $uname ÎËÏËÚ ÒÂÒÒËÈ ËÒ˜ÂÔ‡Ì" body="” ÔÓÎ¸ÁÓ‚‡ÚÂÎˇ Wi-Fi $uname ËÒ˜ÂÔ‡Ì ÎËÏËÚ ÒÂÒÒËÈ."} on-error={};  }  # Clear hostpot log/system logging action set hotspot memory-lines=1;/system logging action set hotspot memory-lines=1000;  }  }:foreach line in=[/log find buffer=hotspot message~"login failed: password"] do={ :do {:local content [/log get $line message];  :put $content;    :local pos1 [:find $content " (" 0];  :put $pos1;  :if ($pos1 != " ") do={    :local uname "";    :local uname7 "";   :local uname8 "";   :local uname9 "";   :local phone "";    :local mess "";   :local mess1 "¬‡¯+Ô‡ÓÎ¸+ÓÚ+WiFi:+";   :local mess2 "+.ŒÌ+ÒÚ‡ÌÂÚ+ÌÂ‰ÂÈÒÚ‚ËÚÂÎ¸Ì˚Ï,+ÂÒÎË+ÌÂ+ÔÓ‰ÍÎ˛˜‡Ú¸Òˇ+Í+ÒÂÚË+·ÓÎÂÂ+3+‰ÌÂÈ.+Ã‡ÍÒËÏ‡Î¸ÌÓÂ+ÍÓÎË˜ÂÒÚ‚Ó+ÛÒÚÓÈÒÚ‚+Ì‡+ÎÓ„ËÌ+2.+—+Û‚‡ÊÂÌËÂÏ,+‘»÷+ Õ÷+–¿Õ";    :set uname [:pick $content ($pos1-12) ($pos1-0)];      :put $uname;    #Password generation     :local date [/system clock get time];     :local hour [:pick $date 0 2];     :local min [:pick $date 3 5];     :local sec [:pick $date 6 8];     :local usernumber [:pick $content ($pos1-7) ($pos1-5)];	    :put $usernumber;    :global pass 27394;     :set pass ($hour * $min * $sec - $usernumber);    :if ($pass = 0) do={      :set pass 6524;     }    :put $pass;    :set mess ($mess1 . $pass . $mess2);#     :set mess ("Your+password+is+" . $pass); #    :set mess $pass;    :put $mess;#    :log info "$mess";    #Add user to hotspot / user-manager     do {/ip hotspot user add name=$uname} on-error={};    do {/ip hotspot user set password=$pass numbers=[find name=$uname]} on-error={};    #do {/tool user-manager user add username=$uname password=$pass customer=admin copy-from=test disabled=no phone=$uname;} on-error={};    #do {/tool user-manager user set password=$pass number=[find username=$uname]} on-error={};     ##SMS.ru    #do {/tool fetch url="http://sms.ksc.loc/index.php\?phone=$uname&message=$mess" keep-result=no} on-error={};    do {/tool fetch mode=http url="http://sms.ksc.loc/api.php"  http-method=post  http-data="phone=$uname&message=$mess" keep-result=no} on-error={};    #do {/tool sms send usb1 phone-number="$uname7" message="login $uname password $pass"} on-error={};    #Email    do {/tool e-mail send from=router@ksc.ru to=root@ksc.ru server=$smtpserv port=25 user=$Eaccount password=$passwd subject="ÕÓ‚˚È ÔÓÎ¸ÁÓ‚‡ÚÂÎ¸ Wi-Fi Ò ÌÓÏÂÓÏ ÚÂÎÂÙÓÌ‡ $uname" body="¿‚ÚÓËÁÓ‚‡Ì ÌÓ‚˚È ÔÓÎ¸ÁÓ‚‡ÚÂÎ¸ Wi-Fi.\r\nÀÓ„ËÌ: $uname\r\nœ‡ÓÎ¸: $pass"} on-error={};      }# Clear hostpot log/system logging action set hotspot memory-lines=1;/system logging action set hotspot memory-lines=1000; }}
+#Search number in log hotspot
+
+  :local smtpserv [:resolve "mail.yyy.com"];
+
+  :local Eaccount "xxx@yyy.com";
+
+  :local passwd "xxxxx";
+
+ :foreach line in=[/log find buffer=hotspot message~"login failed: no more sessions are allowed"] do={
+	:do {:local content [/log get $line message];
+	:put $content;  
+  :local pos1 [:find $content " (" 0];
+  :put $pos1;
+  :if ($pos1 != " ") do={ 
+   :local uname ""; 
+   :local uname7 "";
+   :local uname8 "";
+   :local uname9 "";
+   :local phone ""; 
+   :local mess "";
+   :local mess1 "–î–æ—Å—Ç–∏–≥–Ω—É—Ç+–ª–∏–º–∏—Ç+–ø–æ–¥–∫–ª—é—á–µ–Ω–∏–π+–Ω–∞+–ª–æ–≥–∏–Ω+";
+   :local mess2 ".+–ï—Å–ª–∏+—Å–µ—Å—Å–∏–∏+–∑–∞–Ω—è—Ç—ã+–Ω–µ+–≤–∞—à–∏–º–∏+—É—Å—Ç—Ä–æ–π—Å—Ç–≤–∞–º–∏,+—Ç–æ+–∑–∞–ø—Ä–æ—Å–∏—Ç–µ+–∫–æ–¥+–∑–∞–Ω–æ–≤–æ+–∏+–∞–≤—Ç–æ—Ä–∏–∑—É–π—Ç–µ—Å—å+–ø–æ–≤—Ç–æ—Ä–Ω–æ.+–ï—Å–ª–∏+–¥–∞–Ω–Ω–æ–µ+—Å–æ–æ–±—â–µ–Ω–∏–µ+–ø—Ä–∏—Ö–æ–¥–∏—Ç+–∏+–ø–æ—Å–ª–µ+—ç—Ç–æ–≥–æ,+–æ–±—Ä–∞—Ç–∏—Ç–µ—Å—å+–≤+–æ—Ç–¥–µ–ª+–ù–û–û.+–°+—É–≤–∞–∂–µ–Ω–∏–µ–º,+–§–ò–¶+–ö–ù–¶+–†–ê–ù";
+    :set uname [:pick $content ($pos1-12) ($pos1-0)];
+    :put $uname;
+	:set mess ($mess1 . $uname . $mess2);
+	:put $mess;
+	##SMS
+	do {/tool fetch mode=http url="http://sms.ksc.loc/api.php"  http-method=post  http-data="phone=$uname&message=$mess" keep-result=no} on-error={};
+	#Email
+    do {/tool e-mail send from=router@ksc.ru to=root@ksc.ru server=$smtpserv port=25 user=$Eaccount password=$passwd subject="–£ –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—è $uname –ª–∏–º–∏—Ç —Å–µ—Å—Å–∏–π –∏—Å—á–µ—Ä–ø–∞–Ω" body="–£ –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—è Wi-Fi $uname –∏—Å—á–µ—Ä–ø–∞–Ω –ª–∏–º–∏—Ç —Å–µ—Å—Å–∏–π."} on-error={};
+  }
+  # Clear hostpot log
+
+/system logging action set hotspot memory-lines=1;
+/system logging action set hotspot memory-lines=1000;
+  }
+  }
+
+:foreach line in=[/log find buffer=hotspot message~"trying to log in by http-pap"] do={
+#:foreach line in=[/log find buffer=hotspot message~"login failed: invalid username or password"] do={
+ :do {:local content [/log get $line message];
+  :put $content;  
+  :local pos1 [:find $content " (" 0];
+  :put $pos1;
+  :if ($pos1 != " ") do={ 
+   :local uname ""; 
+   :local uname7 "";
+   :local uname8 "";
+   :local uname9 "";
+   :local phone ""; 
+   :local mess "";
+   :local mess1 "–í–∞—à+–ø–∞—Ä–æ–ª—å+–æ—Ç+WiFi:+";
+   :local mess2 "+.–û–Ω+—Å—Ç–∞–Ω–µ—Ç+–Ω–µ–¥–µ–π—Å—Ç–≤–∏—Ç–µ–ª—å–Ω—ã–º,+–µ—Å–ª–∏+–Ω–µ+–ø–æ–¥–∫–ª—é—á–∞—Ç—å—Å—è+–∫+—Å–µ—Ç–∏+–±–æ–ª–µ–µ+3+–¥–Ω–µ–π.+–ú–∞–∫—Å–∏–º–∞–ª—å–Ω–æ–µ+–∫–æ–ª–∏—á–µ—Å—Ç–≤–æ+—É—Å—Ç—Ä–æ–π—Å—Ç–≤+–Ω–∞+–ª–æ–≥–∏–Ω+2.+–°+—É–≤–∞–∂–µ–Ω–∏–µ–º,+–§–ò–¶+–ö–ù–¶+–†–ê–ù";
+    :set uname [:pick $content ($pos1-12) ($pos1-0)];  
+    :put $uname;
+    #Password generation 
+	:local ruleprefix "random-";
+	:put "list rules to void unseen changes";
+
+	/ip firewall filter print without-paging;
+
+	:put "set up password length"
+	:local passlen
+	if ([:tostr $passlen]="") do={:set passlen 4}
+
+	:put "make passthrough rules if none. according to passlen"
+	:for i from=1 to=$passlen do={
+		:local coment ($ruleprefix.[:tostr $i])
+		if ([/ip firewall filter find comment=$coment]="") do={
+			/ip firewall filter add action=passthrough chain=forward place-before=0 random=($i+1) comment=$coment
+		}
+	}
+                :delay 2;
+	:put "define char table"
+	:global chArray
+	if ([:tostr $chArray]="") do={:set chArray 1,2,3,4,5,6,7,8,9,0}
+
+	:put "count letters"
+	:local letters ( [:len $chArray ] - 1 )
+
+	:global pass
+	:set pass ""
+	:put "generate new password"
+	:for i from=1 to=$passlen do={
+		:local chnum [/ip firewall filter get [find comment=($ruleprefix.[:tostr $i])] packets ]
+		if ( chnum > $letters ) do={
+			:set chnum ( chnum - $letters * ( chnum / $letters ) )
+			# need to reset?
+			#/ip firewall filter reset-counters [find comment=($ruleprefix.[:tostr $i])]
+		}
+		:set pass [:tostr ( $pass . [ :tostr [ :pick $chArray $chnum ] ] ) ]
+	}
+	/ip firewall filter remove [ find comment~$ruleprefix ]
+    # Password generation ends
+    :put $pass;
+    :set mess ($mess1 . $pass . $mess2);
+#     :set mess ("Your+password+is+" . $pass);
+ #    :set mess $pass;
+    :put $mess;
+#    :log info "$mess";
+
+    #Add user to hotspot / user-manager 
+
+    do {/ip hotspot user add name=$uname} on-error={};
+    do {/ip hotspot user set password=$pass numbers=[find name=$uname]} on-error={};
+    #do {/tool user-manager user add username=$uname password=$pass customer=admin copy-from=test disabled=no phone=$uname;} on-error={};
+    #do {/tool user-manager user set password=$pass number=[find username=$uname]} on-error={}; 
+    ##SMS.ru
+    #do {/tool fetch url="http://sms.ksc.loc/index.php\?phone=$uname&message=$mess" keep-result=no} on-error={};
+    do {/tool fetch mode=http url="http://sms.ksc.loc/api.php"  http-method=post  http-data="phone=$uname&message=$mess" keep-result=no} on-error={};
+    #do {/tool sms send usb1 phone-number="$uname7" message="login $uname password $pass"} on-error={};
+    #Email
+    #do {/tool e-mail send from=xxx@yyy.com to=asf@yyy.com server=$smtpserv port=25 user=$Eaccount password=$passwd subject="–ù–æ–≤—ã–π –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—å Wi-Fi —Å –Ω–æ–º–µ—Ä–æ–º —Ç–µ–ª–µ—Ñ–æ–Ω–∞ $uname" body="–ê–≤—Ç–æ—Ä–∏–∑–æ–≤–∞–Ω –Ω–æ–≤—ã–π –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—å Wi-Fi.\r\n–õ–æ–≥–∏–Ω: $uname\r\n–ü–∞—Ä–æ–ª—å: $pass"} on-error={};    
+  }
+# Clear hostpot log
+
+/system logging action set hotspot memory-lines=1;
+/system logging action set hotspot memory-lines=1000;
+ }
+}
+
