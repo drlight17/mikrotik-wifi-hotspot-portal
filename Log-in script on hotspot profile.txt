@@ -1,10 +1,10 @@
 # Edit in /ip hotspot user profile edit default on-login 
 
-:local smtpserv [:resolve "smtp.gmail.com"];
+:local smtpserv [:resolve "mail.com"];
 
-:local Eaccount "drlight17@gmail.com";
+:local Eaccount "sdg@yyy.com";
 
-:local pass "***REMOVED***";
+:local pass "xxxx";
 
 :local nas [/system identity get name];
 
@@ -54,4 +54,4 @@
 
 /ip firewall address-list add list=$today address="log-in.$time1.$userphone.$usermac.$ipuser";
 
-do {/tool e-mail send from=router@drlight.mooo.com to="drlight_here@inbox.ru" server=$smtpserv port=587 user=$Eaccount password=$pass start-tls=yes subject="Login number: $user on $nas" body="Login number: $user mac-address: $usermac time: $time1 ip-address: $ipuser"} on-error={};
+do {/tool e-mail send from=df@kjhv.com to="jkgdf@jsudhf.com" server=$smtpserv port=587 user=$Eaccount password=$pass start-tls=yes subject="Login number: $user on $nas" body="Login number: $user mac-address: $usermac time: $time1 ip-address: $ipuser"} on-error={};
