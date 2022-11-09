@@ -40,6 +40,8 @@
 #:foreach line in=[/log find buffer=hotspot message~"login failed: invalid username or password"] do={
  :do {:local content [/log get $line message];
   :put $content;  
+  :local pos2 [:find $content "_email"];
+  :put $pos2;
   :local pos1 [:find $content " (" 0];
   :put $pos1;
   :if ($pos1 != " ") do={ 
@@ -109,6 +111,11 @@
     #do {/tool fetch url="http://sms.ksc.loc/index.php\?phone=$uname&message=$mess" keep-result=no} on-error={};
     do {/tool fetch mode=http url="http://sms.ksc.loc/api.php"  http-method=post  http-data="phone=$uname&message=$mess" keep-result=no} on-error={};
     #do {/tool sms send usb1 phone-number="$uname7" message="login $uname password $pass"} on-error={};
+     :if ([:len $pos2] != 0) do={
+      :log info "Sending email to administrator!";
+     #Email
+     do {/tool e-mail send from=xxx@yyy.com to=asf@yyy.com cc=asf2@yyy.com server=$smtpserv port=25 user=$Eaccount password=$passwd subject="=?UTF-8?B?0J3QvtCy0YvQuSDQv9C+0LvRjNC30L7QstCw0YLQtdC70YwgV2ktRmkg0YEg0L3QvtC80LXRgNC+0Lwg0YLQtdC70LXRhNC+0L3QsA==?= $uname\r\nContent-type: text/plain;charset=windows-1251" body=Эздравствуйте!\r\n\r\nу нового пользователя Wi-Fi возникли проблемы с доставкой СМС. Ждите обращения.\r\nЛогин: $uname\r\nПароль: $pass"} on-error={}
+    }
     #Email
     #do {/tool e-mail send from=xxx@yyy.com to=asf@yyy.com server=$smtpserv port=25 user=$Eaccount password=$passwd subject="Новый пользователь Wi-Fi с номером телефона $uname" body="Авторизован новый пользователь Wi-Fi.\r\nЛогин: $uname\r\nПароль: $pass"} on-error={};    
   }
